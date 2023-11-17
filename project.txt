@@ -39,7 +39,7 @@ def lambda_handler(event, context):
     json_result = json.dumps(z)
     s3_client = boto3.client('s3')
 
-    # Upload the JSON file to S3
+    # Upload the JSON format as text file to S3
     s3_client.put_object(
         Bucket="projectbmw",
         Key="out.txt",
