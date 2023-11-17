@@ -1,0 +1,48 @@
+import json
+import urllib.parse
+import boto3
+# s3://projectbmw/use pan.png
+def lambda_handler(event, context):
+    # import boto3
+    
+    textract_client = boto3.client('textract')
+    response = textract_client.detect_document_text(
+    Document={
+        'S3Object': {
+            'Bucket': 'projectbmw',
+            'Name': 'use pan.png'
+        }
+    }
+)
+    text = ''
+    for item in response["Blocks"]:
+        if item["BlockType"] == "LINE":
+               text =text + item["Text"]+ ' '
+    # return t
+    
+    comprehend_client = boto3.client('comprehend')
+ 
+    # text = 'My friend Karan Sharma visited me around Christmas in Mussoorie. On the very first evening, we ordered pizzas and Coca-cola from Dominos, and enjoyed watching Game of Thrones. We spent some three days together, before he left on December 29. Soon thereafter, we had COVID-19 cases reported in town.'
+ 
+    entities = comprehend_client.detect_entities(Text = text, LanguageCode = 'en')
+    # Return the results
+    g = {}
+    for i in entities['Entities']:
+        print(i)
+        g[i["Text"]] = i["Type"]
+    # return g
+    z = {
+        'statusCode': 200,
+        'ExtractedText': text,
+        'ComprehendEntities': g
+        }
+    json_result = json.dumps(z)
+    s3_client = boto3.client('s3')
+
+    # Upload the JSON file to S3
+    s3_client.put_object(
+        Bucket="projectbmw",
+        Key="out.txt",
+        Body=json_result
+    )
+    
