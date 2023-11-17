@@ -22,7 +22,7 @@ def lambda_handler(event, context):
     
     comprehend_client = boto3.client('comprehend')
  
-    # text = 'My friend Karan Sharma visited me around Christmas in Mussoorie. On the very first evening, we ordered pizzas and Coca-cola from Dominos, and enjoyed watching Game of Thrones. We spent some three days together, before he left on December 29. Soon thereafter, we had COVID-19 cases reported in town.'
+    # 
  
     entities = comprehend_client.detect_entities(Text = text, LanguageCode = 'en')
     # Return the results
